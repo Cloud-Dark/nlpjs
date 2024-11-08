@@ -13,8 +13,10 @@ if (command === 'train') {
 } else {
     loadModel();
     (async () => {
-        const question = 'berapa jumlah 1 dan 1?';
+        const question = 'When should I go to Europe?';
         const answer = await processQuestion(question);
-        console.log(answer);
+        const question2 = 'kamu bisa apa saja?';
+        const answer2 = await processQuestion(question2);
+        console.log(answer,answer2);
     })();
 }

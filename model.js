@@ -30,7 +30,7 @@ async function model(manager) {
     manager.addAnswer('id', 'general.capabilities', 'Saya dapat membantu dengan operasi matematika dan menjawab pertanyaan lain berdasarkan pengetahuan saya.');
 
     // Load additional data from a remote JSONL file if needed
-    // await loadDataModelUrl(manager, 'en', 'https://your-jsonl-url.com/data.jsonl');
+    await loadDataModelUrl(manager, 'en', 'https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/main/databricks-dolly-15k.jsonl');
 }
 
 // Helper function to load data from a JSONL URL
