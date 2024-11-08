@@ -1,16 +1,16 @@
-const fs = require('fs');
 const { NlpManager } = require('node-nlp');
-const modelFileName = 'brain.model';
-const manager = new NlpManager({ languages: ['en', 'id'] });
+const fs = require('fs');
 
-function loadModel() {
-    if (fs.existsSync(modelFileName)) {
-        manager.load(modelFileName);
-        console.log('Brain model loaded from file.');
+module.exports = function loadModel() {
+    const manager = new NlpManager({ languages: ['en', 'id'], forceNER: true });
+
+    if (fs.existsSync('brain.model')) {
+        manager.load('brain.model');
+        console.log('Model loaded from brain.model');
     } else {
-        console.log('Model file not found. Run "node index.js train" to train and save the model first.');
+        console.error('No trained model found. Run with "train" to create a model first.');
         process.exit(1);
     }
-}
 
-module.exports = { loadModel, manager };
+    return manager;
+};

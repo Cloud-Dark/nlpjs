@@ -1,20 +1,27 @@
 const express = require('express');
-const { process } = require('./process');
+const processInput = require('./process');
 
-
-function startServer() {
+module.exports = async function startServer(manager) {
     const app = express();
     app.use(express.json());
 
-    app.post('/math', async (req, res) => {
-        const question = req.body.question;
-        const answer = await process(question);
-        res.send({ answer });
-    });
-    
-    app.listen(3000, () => {
-        console.log('Server is running on http://localhost:3000');
-    });
-}
+    app.post('/api/message', async (req, res) => {
+        const { language, text } = req.body;
 
-module.exports = { startServer };
+        if (!language || !text) {
+            return res.status(400).json({ error: 'Please provide both language and text in the request body.' });
+        }
+
+        try {
+            const answer = await processInput(manager, language, text);
+            res.json({ answer });
+        } catch (error) {
+            res.status(500).json({ error: 'An error occurred while processing the request.' });
+        }
+    });
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+};

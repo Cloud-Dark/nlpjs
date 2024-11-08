@@ -1,6 +1,4 @@
-const axios = require('axios');
-
-async function model(manager) {
+module.exports = function defineModel(manager) {
     // Predefined math intents and answers
     manager.addDocument('en', 'add %number% and %number%', 'math.add');
     manager.addDocument('en', 'subtract %number% from %number%', 'math.subtract');
@@ -28,33 +26,23 @@ async function model(manager) {
     manager.addDocument('id', 'apa yang kamu bisa?', 'general.capabilities');
     manager.addAnswer('en', 'general.capabilities', 'I can help with math operations and answer other questions based on my knowledge.');
     manager.addAnswer('id', 'general.capabilities', 'Saya dapat membantu dengan operasi matematika dan menjawab pertanyaan lain berdasarkan pengetahuan saya.');
+    // General information intents
+    manager.addDocument('en', 'What is the weather like?', 'info.weather');
+    manager.addDocument('en', 'Tell me the news', 'info.news');
+    manager.addDocument('id', 'Bagaimana cuacanya?', 'info.weather');
+    manager.addDocument('id', 'Beritakan kabarnya', 'info.news');
 
-    // Load additional data from a remote JSONL file if needed
-    await loadDataModelUrl(manager, 'en', 'https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/main/databricks-dolly-15k.jsonl');
-}
+    // Answers for general intents
+    manager.addAnswer('en', 'info.weather', 'I currently cannot fetch weather data.');
+    manager.addAnswer('en', 'info.news', 'I currently cannot fetch news data.');
+    manager.addAnswer('id', 'info.weather', 'Saat ini saya tidak bisa mengambil data cuaca.');
+    manager.addAnswer('id', 'info.news', 'Saat ini saya tidak bisa mengambil berita.');
+    // Sapaan (Greetings)
+    manager.addDocument('en', 'hello', 'greetings.hello');
+    manager.addDocument('en', 'hi there', 'greetings.hello');
+    manager.addAnswer('en', 'greetings.hello', 'Hello! How can I assist you today?');
 
-// Helper function to load data from a JSONL URL
-async function loadDataModelUrl(manager, language, url) {
-    try {
-        const response = await axios.get(url);
-        const lines = response.data.split('\n').filter(line => line.trim());
-
-        lines.forEach(line => {
-            const data = JSON.parse(line);
-            const question = data.instruction;
-            const answer = data.response;
-            const context = data.context || '';
-            const intent = data.category || 'general.query';
-
-            // Add the question and answer from the dataset
-            manager.addDocument(language, `${context} ${question}`, intent);
-            manager.addAnswer(language, intent, answer);
-        });
-
-        console.log(`Data loaded from ${url} and added to the model.`);
-    } catch (error) {
-        console.error(`Failed to load data from ${url}:`, error.message);
-    }
-}
-
-module.exports = { model };
+    // Pertanyaan umum (General questions)
+    manager.addDocument('en', 'what is the weather like', 'info.weather');
+    manager.addAnswer('en', 'info.weather', 'I am unable to fetch real-time weather data.');
+};
