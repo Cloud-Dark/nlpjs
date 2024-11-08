@@ -1,7 +1,7 @@
 const { trainAndSave } = require('./train');
 const { loadModel } = require('./load');
 const { startServer } = require('./server');
-const { processMath } = require('./process');
+const { process: processQuestion } = require('./process');
 
 const command = process.argv[2];
 
@@ -13,8 +13,8 @@ if (command === 'train') {
 } else {
     loadModel();
     (async () => {
-        const question = 'berapa jumlah 5+10';
-        const answer = await processMath(question);
+        const question = 'berapa jumlah 1 dan 1?';
+        const answer = await processQuestion(question);
         console.log(answer);
     })();
 }

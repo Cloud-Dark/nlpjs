@@ -1,36 +1,40 @@
 const { manager } = require('./load');
 
-async function processMath(question) {
-    const response = await manager.process('id', question);
+async function process(question) {
+    const response = await manager.process('id', question); // Adjust language if needed
 
-    let result;
-    const { entities } = response;
-    if (entities.length === 2) {
-        const num1 = parseFloat(entities[0].sourceText);
-        const num2 = parseFloat(entities[1].sourceText);
+    // Check if the response is a math operation
+    if (response.intent.startsWith('math.') && response.entities.length === 2) {
+        const num1 = parseFloat(response.entities[0].sourceText);
+        const num2 = parseFloat(response.entities[1].sourceText);
+        let result;
 
         switch (response.intent) {
             case 'math.add':
                 result = num1 + num2;
                 break;
             case 'math.subtract':
-                result = num2 - num1;
+                result = num1 - num2;
                 break;
             case 'math.multiply':
                 result = num1 * num2;
                 break;
             case 'math.divide':
-                result = num2 / num1;
+                result = num2 !== 0 ? num1 / num2 : 'Cannot divide by zero';
                 break;
             default:
-                result = 'Unknown operation';
+                result = 'Operation not supported';
         }
-    } else {
-        result = 'Please provide two numbers';
+
+        return `Hasilnya adalah ${result}.`;
     }
 
-    response.answer = response.answer.replace('{{ result }}', result);
-    return response.answer;
+    // If not a math operation, return the response answer for general questions
+    if (response.answer) {
+        return response.answer;
+    } else {
+        return 'I am unable to understand the question. Please try asking in a different way.';
+    }
 }
 
-module.exports = { processMath };
+module.exports = { process };

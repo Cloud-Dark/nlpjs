@@ -1,5 +1,6 @@
 const express = require('express');
-const { processMath } = require('./process');
+const { process } = require('./process');
+
 
 function startServer() {
     const app = express();
@@ -7,10 +8,10 @@ function startServer() {
 
     app.post('/math', async (req, res) => {
         const question = req.body.question;
-        const answer = await processMath(question);
+        const answer = await process(question);
         res.send({ answer });
     });
-
+    
     app.listen(3000, () => {
         console.log('Server is running on http://localhost:3000');
     });
